@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Food Swap</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Body ke andar, top mein add karo -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-confirmation-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Delete Food Post?</h2>
+            <p>Are you sure you want to delete this food post? This action cannot be undone.</p>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeDeleteConfirmation()">Cancel</button>
+                <button class="btn-delete-confirm" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Section (shown when not logged in) -->
+    <div id="auth-section" class="auth-container">
+        <div class="auth-card">
+            <h1>🍔 Campus Food Swap</h1>
+            <p>Share food, reduce waste, build community</p>
+            
+            <div id="login-form">
+                <div class="form-group">
+                    <input 
+                        type="text" 
+                        id="login-email" 
+                        placeholder="Email or Username" 
+                        required>
+                    <span class="error-message" id="login-email-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <input 
+                        type="password" 
+                        id="login-password" 
+                        placeholder="Password" 
+                        required>
+                    <span class="error-message" id="login-password-error"></span>
+                </div>
+                <button onclick="login()">Login</button>
+                <p>Don't have an account? <a href="#" onclick="showSignup()">Sign up</a></p>
+                <p><a href="#" onclick="showForgotPassword()">Forgot Password?</a></p>
+            </div>
+
+            <!-- Forgot Password Form - Step 1: Enter Email -->
+            <div id="forgot-password-form" style="display:none;">
+                <h1>Reset Password</h1>
+                <p style="color: #666; font-size: 0.9rem;">Enter your email to receive a 6-digit code</p>
+                <div class="form-group">
+                    <input type="email" id="forgot-email" placeholder="Your Email" required>
+                    <span class="error-message" id="forgot-email-error"></span>
+                </div>
+                <button onclick="sendOTP()">Send Code</button>
+                <p>Remember your password? <a href="#" onclick="showLogin()">Back to Login</a></p>
+            </div>
+
+
+            <!-- Forgot Password Form - Step 2: Enter OTP -->
+            <div id="verify-otp-form" style="display:none;">
+                <h2>Enter Verification Code</h2>
+                <p style="color: #666; font-size: 0.9rem;">We sent a 6-digit code to <span id="otp-email"></span></p>
+                
+                <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;">
+                    <input type="text" id="otp1" maxlength="1" class="otp-input" 
+                        oninput="moveToNext(this, 'otp2')" 
+                        onpaste="handleOTPPaste(event)">
+                    <input type="text" id="otp2" maxlength="1" class="otp-input" 
+                        oninput="moveToNext(this, 'otp3')" 
+                        onpaste="handleOTPPaste(event)">
+                    <input type="text" id="otp3" maxlength="1" class="otp-input" 
+                        oninput="moveToNext(this, 'otp4')" 
+                        onpaste="handleOTPPaste(event)">
+                    <input type="text" id="otp4" maxlength="1" class="otp-input" 
+                        oninput="moveToNext(this, 'otp5')" 
+                        onpaste="handleOTPPaste(event)">
+                    <input type="text" id="otp5" maxlength="1" class="otp-input" 
+                        oninput="moveToNext(this, 'otp6')" 
+                        onpaste="handleOTPPaste(event)">
+                    <input type="text" id="otp6" maxlength="1" class="otp-input" 
+                        onpaste="handleOTPPaste(event)">
+                </div>
+    
+                <button onclick="verifyOTP()">Verify Code</button>
+                <p><a href="#" onclick="resendOTP()">Resend Code</a></p>
+                <p><a href="#" onclick="showForgotPassword()">Change Email</a></p>
+            </div>
+
+            <!-- Forgot Password Form - Step 3: Reset Password -->
+            <div id="reset-password-form" style="display:none;">
+                <h2>Create New Password</h2>
+                <p style="color: #666; font-size: 0.9rem;">Enter your new password</p>
+                <input type="password" id="new-password" placeholder="New Password" required>
+                <input type="password" id="confirm-new-password" placeholder="Confirm New Password" required>
+                <button onclick="resetPassword()">Reset Password</button>
+            </div>
+
+            <!-- Email Verification Form (Signup) -->
+            <div id="verify-email-form" style="display:none;">
+                <h2>Verify Your Email</h2>
+                <p style="color: #666; font-size: 0.9rem;">
+                    We sent a 6-digit code to <span id="verify-email-address"></span>
+                </p>
+                <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;">
+                    <input type="text" id="email-otp1" maxlength="1" class="otp-input" oninput="moveToNext(this, 'email-otp2')" onpaste="handleOTPPaste(event)">
+                    <input type="text" id="email-otp2" maxlength="1" class="otp-input" oninput="moveToNext(this, 'email-otp3')" onpaste="handleOTPPaste(event)">
+                    <input type="text" id="email-otp3" maxlength="1" class="otp-input" oninput="moveToNext(this, 'email-otp4')" onpaste="handleOTPPaste(event)">
+                    <input type="text" id="email-otp4" maxlength="1" class="otp-input" oninput="moveToNext(this, 'email-otp5')" onpaste="handleOTPPaste(event)">
+                    <input type="text" id="email-otp5" maxlength="1" class="otp-input" oninput="moveToNext(this, 'email-otp6')" onpaste="handleOTPPaste(event)">
+                    <input type="text" id="email-otp6" maxlength="1" class="otp-input" onpaste="handleOTPPaste(event)">
+                </div>
+                <span id="verify-email-success" style="display:block; text-align:center; margin-bottom:10px; font-size:15px;"></span>
+                <button onclick="verifyEmailOTP()">Verify Code</button>
+                <p><a href="#" onclick="resendEmailOTP()">Resend Code</a></p>
+                <p><a href="#" onclick="showSignup()">Change Email</a></p>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signup-form" style="display:none;">
+                <!-- <h2>Sign Up</h2> -->
+                <h2>🍕 Join Food Swap</h2>
+                <p>Create account to start sharing</p>
+                <div class="form-group">
+                    <input type="text" id="signup-username" placeholder="Username" required>
+                    <span class="error-message" id="signup-username-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" id="signup-name" placeholder="Full Name" required>
+                    <span class="error-message" id="signup-name-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <input type="email" id="signup-email" placeholder="College or Student Email" required>
+                    <span class="error-message" id="signup-email-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" id="signup-password" placeholder="Password" required>
+                    <span class="error-message" id="signup-password-error"></span>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="signup-confirm-password" placeholder="Confirm Password" required>
+                    <span class="error-message" id="signup-confirm-password-error"></span>
+                </div>
+                <div class="form-group">
+                    <select id="signup-hostel" required>
+                        <option value="">Select Hostel</option>
+                        <option value="Hostel A">Hostel A</option>
+                        <option value="Hostel B">Hostel B</option>
+                        <option value="Hostel C">Hostel C</option>
+                        <option value="Girls Hostel">Girls Hostel</option>
+                        <span class="error-message" id="signup-hostel-error"></span>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="signup-room" placeholder="Room Number" required>
+                    <span class="error-message" id="signup-room-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <input type="tel" id="signup-phone" placeholder="Phone (10 digits)" required maxlength="10">
+                    <span class="error-message" id="signup-phone-error"></span>
+                </div>
+                <button onclick="signup()">Sign Up</button>
+                <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App (shown when logged in) -->
+    <div id="app-section" style="display:none;">
+        <nav class="main-navbar">
+            <div class="navbar-left">
+                <span class="navbar-brand">🍔 Campus Food Swap</span>
+            </div>
+            <div class="navbar-right">
+                <form class="navbar-search" onsubmit="event.preventDefault(); searchFoods();">
+                    <input type="text" id="search-input" placeholder="Search food..." />
+                    <button type="submit"><span>
+                        <i class="fas fa-search"></i>
+                    </span></button>
+                </form>
+                <select id="category-filter" class="navbar-categories">
+                    <option value="">All Categories</option>
+                    <option value="Snacks">Snacks</option>
+                    <option value="Meals">Meals</option>
+                    <option value="Drinks">Drinks</option>
+                    <option value="Desserts">Desserts</option>
+                </select>
+                <span class="user-info" id="user-name">Username</span>
+                <span class="points-badge" id="user-points">0 pts</span>
+                <button class="navbar-icon-btn inbox-btn" onclick="showInboxModal()" title="Inbox">
+                    <i class="fas fa-inbox"></i>
+                    <span class="inbox-badge" id="inbox-badge" style="display:none;">0</span>
+                </button>
+                <button class="navbar-icon-btn" title="Settings" onclick="showSettings()">
+                    <span><i class="fas fa-gear"></i></span>
+                </button>
+                <button class="btn-logout" onclick="logout()" title="Logout">
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <div class="container">
+                <button class="btn-primary" onclick="showAddFoodModal()">
+                    <i class="fas fa-plus"></i> Add Food
+                </button>
+                <button class="btn-sos" onclick="sendHungerSOS()">
+                    <i class="fas fa-bell"></i> Hunger SOS
+                </button>
+            </div>
+        </div>
+
+        <!-- Food Listings -->
+        <div class="food-grid">
+            <div class="container" id="food-listings">
+                <!-- Food cards will be inserted here dynamically -->
+            </div>
+        </div>
+
+        <!-- Inbox Modal -->
+        <div id="inbox-modal" class="modal" style="display:none;">
+            <div class="modal-content" style="max-width:600px; max-height:80vh; overflow-y:auto;">
+                <span class="close" onclick="closeInboxModal()">&times;</span>
+                <h2 style="margin-bottom:20px;">
+                    <i class="fas fa-bell"></i> Requests
+                </h2>
+                
+                <!-- Tabs -->
+                <div style="display:flex; gap:10px; margin-bottom:20px; border-bottom:2px solid #e0e0e0;">
+                    <button onclick="switchTab('received')" id="tab-received" style="
+                        padding:10px 20px;
+                        background:none;
+                        border:none;
+                        border-bottom:3px solid #FF6B35;
+                        color:#FF6B35;
+                        font-weight:600;
+                        cursor:pointer;
+                    ">
+                        <i class="fas fa-inbox"></i> Received
+                    </button>
+                    <button onclick="switchTab('sent')" id="tab-sent" style="
+                        padding:10px 20px;
+                        background:none;
+                        border:none;
+                        border-bottom:3px solid transparent;
+                        color:#999;
+                        font-weight:600;
+                        cursor:pointer;
+                    ">
+                        <i class="fas fa-paper-plane"></i> Sent
+                    </button>
+                </div>
+                
+                <!-- Received Requests -->
+                <div id="inbox-requests">
+                    <p style="text-align:center; color:#999;">Loading...</p>
+                </div>
+                
+                <!-- Sent Requests -->
+                <div id="my-requests" style="display:none;">
+                    <p style="text-align:center; color:#999;">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Modal -->
+        <div id="chat-modal" class="modal" style="display:none;">
+            <div class="modal-content" style="max-width:500px; max-height:80vh; display:flex; flex-direction:column;">
+                <span class="close" onclick="closeChat()">&times;</span>
+                <h2 style="margin-bottom:10px;">
+                    <i class="fas fa-comments"></i> Chat
+                </h2>
+                
+                <div id="chat-messages" style="
+                    flex:1; 
+                    overflow-y:auto; 
+                    margin-bottom:15px; 
+                    padding:15px; 
+                    background:#f5f5f5; 
+                    border-radius:8px;
+                    display:flex;
+                    flex-direction:column;
+                    gap:10px;
+                "></div>
+                
+                <div style="display:flex; gap:8px; align-items:stretch;">
+                    <input 
+                        type="text" 
+                        id="chat-input" 
+                        placeholder="Type a message..." 
+                        style="
+                            flex:1; 
+                            padding:10px 12px; 
+                            border:2px solid #e2e8f0; 
+                            border-radius:6px;
+                            font-size:14px;
+                            font-family: inherit;
+                        "
+                        onkeypress="if(event.key==='Enter') sendChatMessage();"
+                    >
+                    <button onclick="sendChatMessage()" style="
+                        padding:10px 14px;
+                        background:#FF6B35;
+                        color:white;
+                        border:none;
+                        border-radius:6px;
+                        cursor:pointer;
+                        font-size:16px;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        min-width: 42px;
+                        width:42px;
+                        height: 42px;
+                        flex-shrink:0;
+                    " title="Send">
+                        ➤
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Edit Food Modal -->
+        <div id="edit-food-modal" class="modal" style="display:none;">
+            <div class="modal-content" style="max-width:400px;">
+                <span class="close" onclick="closeEditFoodModal()">&times;</span>
+                <h2>Edit Food Post</h2>
+                <form id="edit-food-form" onsubmit="event.preventDefault(); saveFoodEdit();">
+                    <input type="hidden" id="edit-food-id">
+                    <label>Title</label>
+                    <input type="text" id="edit-food-title" required>
+                    <label>Description</label>
+                    <textarea id="edit-food-desc" required></textarea>
+                    <label>Category</label>
+                    <select id="edit-food-category">
+                        <option value="Snacks">Snacks</option>
+                        <option value="Meals">Meals</option>
+                        <option value="Drinks">Drinks</option>
+                        <option value="Desserts">Desserts</option>
+                    </select>
+                    <button type="submit" class="btn-primary" style="margin-top:12px;">Save Changes</button>
+                </form>
+            </div>
+        </div> 
+
+        <!-- Add Food Modal -->
+        <div id="add-food-modal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeAddFoodModal()">&times;</span>
+                <h2>Share Your Food</h2>
+                
+                <input type="file" id="food-image" accept="image/*" onchange="previewImage()">
+                <img id="image-preview" style="display:none; max-width:200px; margin:10px 0;">
+                
+                <input type="text" id="food-name" placeholder="Food Name" required>
+                <input type="text" id="food-quantity" placeholder="Quantity (e.g., 2 slices)">
+                <textarea id="food-description" placeholder="Description"></textarea>
+                
+                <select id="food-category" required>
+                    <option value="">Select Category</option>
+                    <option value="Fast Food">Fast Food</option>
+                    <option value="Homemade">Homemade</option>
+                    <option value="Snacks">Snacks</option>
+                    <option value="Beverages">Beverages</option>
+                    <option value="Desserts">Desserts</option>
+                    <option value="Meals">Meals</option>
+                </select>
+                
+                <input type="number" id="food-price" placeholder="Price (₹) - Leave empty for free">
+                <input type="text" id="swap-for" placeholder="Or willing to swap for... (e.g., Biryani, Momos)">
+                
+                <input type="text" id="pickup-location" placeholder="Pickup Location (e.g., Hostel A, Room 201)">
+                <input type="datetime-local" id="available-until">
+                
+                <button onclick="addFood()" class="btn-primary">Post Food</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Verified Success Overlay -->
+    <div id="email-verified-overlay" style="display:none; position:fixed; z-index:9999; inset:0; background:white; display:flex; align-items:center; justify-content:center;">
+        <div style="text-align:center;">
+            <div style="font-size:60px; color:#10b940; margin-bottom:20px;">✅</div>
+            <h2 style="color:#222; margin-bottom:10px;">Email Verified!</h2>
+            <p style="color:#555; font-size:18px;">Your email has been verified successfully.<br>You can now log in.</p>
+            <button onclick="hideEmailVerifiedOverlay()" style="margin-top:25px; padding:12px 32px; background:#10b940; color:white; border:none; border-radius:8px; font-size:16px; cursor:pointer;">Go to Login</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:400px;">
+        <span class="close" onclick="closeSettings()">&times;</span>
+        <h2 style="margin-bottom:18px;">Settings</h2>
+        <ul class="settings-list">
+        <li><button onclick="showEditProfile()" class="settings-btn"><i class="fas fa-user-edit"></i> Edit Profile</button></li>
+        <li><button onclick="changePassword()" class="settings-btn"><i class="fas fa-key"></i> Change Password</button></li>
+        <li><button onclick="notificationPreferences()" class="settings-btn"><i class="fas fa-bell"></i> Notification Preferences</button></li>
+        <li><button onclick="logout()" class="settings-btn logout"><i class="fas fa-sign-out-alt"></i> Logout</button></li>
+        </ul>
+    </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:400px; position:relative;">
+            <span class="close" onclick="closeEditProfile()">&times;</span>
+            <h2 style="margin-bottom:18px;">Edit Profile</h2>
+            <form id="edit-profile-form" onsubmit="event.preventDefault(); saveProfile();">
+                <label for="edit-name">Full Name</label>
+                <input type="text" id="edit-name" name="edit-name" required>
+                <label for="edit-username">Username</label>
+                <input type="text" id="edit-username" name="edit-username" required>
+                <label for="edit-email">Email</label>
+                <input type="email" id="edit-email" name="edit-email" required>
+                <label for="edit-hostel">Hostel</label>
+                <input type="text" id="edit-hostel" name="edit-hostel">
+                <label for="edit-room">Room Number</label>
+                <input type="text" id="edit-room" name="edit-room">
+                <label for="edit-phone">Phone</label>
+                <input type="tel" id="edit-phone" name="edit-phone" maxlength="10">
+                <span id="edit-profile-success" style="display:block; text-align:center; margin:10px 0 0 0; color:#10b981;"></span>
+                <button type="submit" class="btn-primary" style="margin-top:12px;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="change-password-modal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:400px; position:relative;">
+            <span class="close" onclick="closeChangePassword()">&times;</span>
+            <h2 style="margin-bottom:18px;">Change Password</h2>
+            <form id="change-password-form" onsubmit="event.preventDefault(); changePasswordSubmit();">
+                <label for="current-password">Current Password</label>
+                <input type="password" id="current-password" name="current-password" required>
+                <label for="new-password">New Password</label>
+                <input type="password" id="change-new-password" name="new-password" required minlength="6">
+                <label for="confirm-new-password">Confirm New Password</label>
+                <input type="password" id="change-confirm-new-password" name="confirm-new-password" required minlength="6">
+                <span id="change-password-msg" style="display:block; text-align:center; margin:10px 0 0 0; color:#10b981;"></span>
+                <button type="submit" class="btn-primary" style="margin-top:12px;">Save Password</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Preferences Modal -->
+    <div id="notification-modal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:400px; position:relative;">
+            <span class="close" onclick="closeNotificationPreferences()">&times;</span>
+            <h2 style="margin-bottom:18px;">Notification Preferences</h2>
+            <form id="notification-form" onsubmit="event.preventDefault(); saveNotificationPreferences();">
+                <label>
+                    <input type="checkbox" id="notif-email" checked>
+                    Email notifications for new food listings
+                </label>
+                <label>
+                    <input type="checkbox" id="notif-app" checked>
+                    In-app notifications for offers and messages
+                </label>
+                <label>
+                    <input type="checkbox" id="notif-promo">
+                    Promotional updates and tips
+                </label>
+                <span id="notification-success" style="display:block; text-align:center; margin:10px 0 0 0; color:#10b981;"></span>
+                <button type="submit" class="btn-primary" style="margin-top:12px;">Save Preferences</button>
+            </form>
+        </div>
+    </div>
+
+    
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- EmailJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script>
+        (function() {
+            try {
+                emailjs.init("JgySMBnOSdwO8eG8v");
+                console.log("✅ EmailJS initialized");
+            } catch (error) {
+                console.error("❌ EmailJS init failed:", error);
+            }
+        })();
+    </script>
+    
+    <!-- Your Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/food-listings.js"></script>
+    <script src="js/inbox.js"></script>
+    <script src="js/app.js"></script>  
+
+</body>
+</html>

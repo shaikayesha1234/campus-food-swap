@@ -1,0 +1,303 @@
+/* ===== INBOX BUTTON IN NAVBAR ===== */
+.inbox-btn {
+    position: relative;
+}
+
+.inbox-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* ===== SWAP REQUEST CARD ===== */
+.swap-request-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.swap-request-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #FF6B35;
+}
+
+.swap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 12px;
+}
+
+.swap-food-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.swap-food-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.swap-food-info div {
+    flex: 1;
+    min-width: 0;
+}
+
+.swap-food-info h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #222;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.swap-category {
+    margin: 4px 0 0 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-accepted {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-declined {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* ===== REQUESTER INFO ===== */
+.requester-info {
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border-left: 4px solid #FF6B35;
+}
+
+.requester-info p {
+    margin: 6px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.requester-info i {
+    color: #FF6B35;
+    width: 16px;
+    margin-right: 8px;
+}
+
+/* ===== SWAP ACTIONS ===== */
+.swap-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-chat, .btn-accept, .btn-reject {
+    flex: 1;
+    min-width: 100px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-chat {
+    background: #007bff;
+    color: white;
+}
+
+.btn-chat:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.btn-accept {
+    background: #28a745;
+    color: white;
+}
+
+.btn-accept:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-reject {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-reject:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.swap-date {
+    font-size: 12px;
+    color: #999;
+    text-align: right;
+}
+
+/* ===== CHAT MESSAGES ===== */
+.chat-message {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    animation: slideIn 0.3s ease;
+}
+
+.msg-sent {
+    align-self: flex-end;
+    background: #FF6B35;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 80%;
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+}
+
+/* .msg-received {
+    align-self: flex-start;
+    background: #e9ecef;
+    color: #222;
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 80%;
+} */
+
+.chat-message p {
+    color: white !important;
+    margin: 0;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.chat-message small {
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 4px;
+}
+
+.msg-received {
+    align-self: flex-start;
+    background: #e9ecef;
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 80%;
+}
+
+.msg-received p {
+    color: #222 !important;
+    margin: 0;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.msg-received small {
+    color: #666 !important;
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 4px;
+}
+
+/* ===== NO REQUESTS MESSAGE ===== */
+.no-requests {
+    text-align: center;
+    color: #999;
+    padding: 40px 20px;
+    font-size: 16px;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+    .swap-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .swap-actions {
+        flex-direction: column;
+    }
+
+    .btn-chat, .btn-accept, .btn-reject {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .msg-sent,
+    .msg-received {
+        max-width: 95%;
+    }
+}
+.btn-primary i {
+    margin-right: 6px;
+}
+
+.btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
