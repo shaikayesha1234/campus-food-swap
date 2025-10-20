@@ -642,7 +642,7 @@ async function verifyEmailOTP() {
             email: signupData.email,
             password: signupData.password,
             options: {
-                emailRedirectTo: window.location.origin
+                //emailRedirectTo: window.location.origin
             }
         });
 
